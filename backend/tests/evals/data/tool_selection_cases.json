@@ -1,0 +1,12 @@
+[
+  {"input": "Show my saved trips", "expected_tool": "get_my_trips"},
+  {"input": "What's the weather like in Goa tomorrow?", "expected_tool": "get_weather"},
+  {"input": "Find me hotels in Jaipur for 2 guests", "expected_tool": "search_hotels"},
+  {"input": "What activities can I do in Kerala?", "expected_tool": "search_activities"},
+  {"input": "Tell me about Bangalore as a destination", "expected_tool": "get_destination_info"},
+  {"input": "Check availability at hotel 3 from 2026-01-01 to 2026-01-05 for 2 guests", "expected_tool": "check_hotel_availability"},
+  {"input": "Get details for hotel 5", "expected_tool": "get_hotel_details"},
+  {"input": "Change my trip trip-123 status to confirmed", "expected_tool": "update_trip"},
+  {"input": "Delete my trip trip-999", "expected_tool": "delete_trip"},
+  {"input": "Hi, how are you?", "expected_tool": null}
+]

@@ -1,0 +1,30 @@
+[tool.ruff]
+line-length = 115
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# E501: line length handled by formatting, not worth blocking on.
+# B008: FastAPI's `Depends(...)` in argument defaults is the framework's
+# intended dependency-injection idiom, not a real default-value bug.
+# UP017: `datetime.UTC` needs Python 3.11+; `timezone.utc` is kept for
+# compatibility with older local dev interpreters.
+ignore = ["E501", "B008", "UP017"]
+
+[tool.ruff.lint.per-file-ignores]
+# conftest.py must set env vars before importing `app.*`, which reads them
+# eagerly at import time - so these imports are deliberately not at the top.
+"tests/conftest.py" = ["E402"]
+
+[tool.coverage.run]
+# SQLAlchemy's async layer runs DB work inside greenlets; without this,
+# coverage loses track of lines that execute after an `await db.execute()`.
+concurrency = ["greenlet", "thread"]
+source = ["app"]
+omit = ["app/db/seed.py"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+disallow_untyped_defs = false
+warn_unused_ignores = true
