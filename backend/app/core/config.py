@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     jwt_access_token_expire_minutes: int = 60
 
     groq_api_key: str
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "openai/gpt-oss-120b"
     groq_base_url: str = "https://api.groq.com/openai/v1"
 
     log_level: str = "INFO"
