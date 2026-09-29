@@ -9,7 +9,7 @@ Stack: **FastAPI · PostgreSQL · Groq LLM · React + TypeScript · Docker**
 
 ---
 
-## How it works (60-second version)
+## How it works
 
 ```text
  You ──► React UI ──► FastAPI ──► Agent loop ──► LLM (Groq)
