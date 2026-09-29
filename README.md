@@ -219,7 +219,7 @@ can't ask for someone else's data.
 docker compose exec api pytest
 
 # Or locally, from backend/ with the venv active:
-pytest                    # 57 tests, uses a throwaway SQLite DB and a fake LLM
+pytest                    # 59 tests, uses a throwaway SQLite DB and a fake LLM
 pytest --cov=app          # coverage (~95%)
 ruff check app tests && mypy app
 ```
@@ -229,6 +229,14 @@ Tests never call Groq. A scripted fake LLM makes multi-step tool calling determi
 ```bash
 docker compose exec api pytest tests/evals --live-llm -s
 ```
+This sends the 20 questions in
+[tool_selection_cases.json](backend/tests/evals/data/tool_selection_cases.json) to the real model. Each
+question lists the function it should trigger (or none). The run prints a pass/fail table plus
+**tool-selection accuracy**, **argument accuracy** and **invalid-tool rate**. It pauses between requests
+and retries rate limits, so it takes about a minute on a free Groq key.
+
+Latest run (`openai/gpt-oss-120b`): **20/20 correct tools, 100% argument accuracy, 0% invalid tools.**
+To add a scenario, append a question and its expected tool to the JSON file.
 
 ---
 
