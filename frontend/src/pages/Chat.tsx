@@ -1,25 +1,87 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import { Markdown } from "../components/Markdown";
 import { useConversation } from "../hooks/useConversations";
 import { useSendMessage } from "../hooks/useChat";
 import { extractErrorMessage } from "../services/api";
 import type { ChatUIMessage } from "../types";
 
-function Bubble({ msg }: { msg: ChatUIMessage }) {
-  const isUser = msg.role === "user";
+const TOOL_LABELS: Record<string, { icon: string; label: string }> = {
+  search_hotels: { icon: "🏨", label: "Searched hotels" },
+  get_hotel_details: { icon: "🛏️", label: "Hotel details" },
+  check_hotel_availability: { icon: "📅", label: "Checked availability" },
+  get_destination_info: { icon: "🗺️", label: "Destination info" },
+  search_activities: { icon: "🏄", label: "Found activities" },
+  get_weather: { icon: "🌤️", label: "Checked weather" },
+  create_trip: { icon: "✈️", label: "Saved trip" },
+  get_my_trips: { icon: "🧳", label: "Your trips" },
+  get_trip: { icon: "🧳", label: "Trip details" },
+  update_trip: { icon: "✏️", label: "Updated trip" },
+  delete_trip: { icon: "🗑️", label: "Deleted trip" },
+};
+
+function ToolChips({ tools }: { tools: string[] }) {
+  const unique = [...new Set(tools)];
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className="max-w-[70%]">
-        <div
-          className={`whitespace-pre-wrap rounded-2xl px-4 py-2 text-sm ${
-            isUser ? "bg-brand-600 text-white" : "bg-white text-gray-800 border border-gray-200"
-          }`}
-        >
-          {msg.pending ? <span className="italic text-gray-400">Agent is thinking...</span> : msg.content}
+    <div className="mb-2 flex flex-wrap gap-1.5">
+      {unique.map((name) => {
+        const meta = TOOL_LABELS[name] ?? { icon: "🔧", label: name };
+        return (
+          <span
+            key={name}
+            className="inline-flex items-center gap-1 rounded-full border border-brand-100 bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700"
+          >
+            <span aria-hidden>{meta.icon}</span>
+            {meta.label}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function ThinkingDots() {
+  return (
+    <div className="flex items-center gap-2 text-sm text-gray-400">
+      <span className="flex gap-1">
+        {[0, 150, 300].map((delay) => (
+          <span
+            key={delay}
+            className="h-2 w-2 animate-bounce rounded-full bg-brand-500"
+            style={{ animationDelay: `${delay}ms` }}
+          />
+        ))}
+      </span>
+      Planning your trip...
+    </div>
+  );
+}
+
+function Bubble({ msg }: { msg: ChatUIMessage }) {
+  if (msg.role === "user") {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[75%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-gradient-to-br from-brand-500 to-brand-700 px-4 py-2.5 text-sm text-white shadow-sm">
+          {msg.content}
         </div>
-        {!!msg.toolActivity?.length && (
-          <div className="mt-1 text-xs text-gray-400">used: {msg.toolActivity.join(", ")}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-start gap-3">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 text-sm text-white shadow-sm">
+        ✈
+      </div>
+      <div className="min-w-0 max-w-[85%] rounded-2xl rounded-tl-md border border-gray-200 bg-white px-5 py-4 shadow-sm">
+        {msg.pending ? (
+          <ThinkingDots />
+        ) : (
+          <>
+            {!!msg.toolActivity?.length && <ToolChips tools={msg.toolActivity} />}
+            <Markdown content={msg.content} />
+          </>
         )}
       </div>
     </div>
